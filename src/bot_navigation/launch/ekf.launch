@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- 注: 需禁用原odom的TF转换 -->
+  <node pkg="robot_localization" type="ekf_localization_node" name="ekf_localization" clear_params="true" output="screen">
+    <!-- 加载参数文件 -->
+    <rosparam command="load" file="$(find bot_navigation)/param/ekf_localization.yaml" />
+
+    <param name="odom_frame" value="odom" />
+    <param name="base_link_frame" value="base_link" />
+    <param name="world_frame" value="odom" />
+    <param name="odom0" value="odom" />
+    <param name="imu0" value="imu/data" />
+
+    <!-- <remap from="odometry/filtered" to=""/> -->
+    <!-- <remap from="accel/filtered" to=""/> -->
+  </node>
+</launch>

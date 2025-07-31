@@ -1,0 +1,35 @@
+<launch>
+  <!-- Arguments -->
+  <arg name="model" default="dr200" doc="model type [dr200]"/>
+  <arg name="slow_mode" default="false"/>
+  <arg name="move_forward_only" default="false"/>
+  <arg name="base_local_planner" default="dwa_local_planner/DWAPlannerROS" doc="base local planner [dwa_local_planner/DWAPlannerROS, teb_local_planner/TebLocalPlannerROS]"/>
+
+  <!-- Set param_suffix based on slow_mode -->
+  <arg name="param_suffix" value="_slow" if="$(arg slow_mode)"/>
+  <arg name="param_suffix" value="" unless="$(arg slow_mode)"/>
+
+  <!-- move_base -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+    <param name="base_local_planner" value="$(arg base_local_planner)" />
+    
+    <remap from="cmd_vel" to="cmd_vel"/>
+    <remap from="odom" to="odom"/>
+
+    <rosparam file="$(find bot_navigation)/param/$(arg model)/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find bot_navigation)/param/$(arg model)/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find bot_navigation)/param/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find bot_navigation)/param/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find bot_navigation)/param/move_base_params.yaml" command="load" />
+    <rosparam file="$(find bot_navigation)/param/global_planner_params.yaml" command="load" />
+
+    <rosparam if="$(eval arg('base_local_planner') == 'dwa_local_planner/DWAPlannerROS')" 
+      file="$(find bot_navigation)/param/$(arg model)/dwa_local_planner_params$(arg param_suffix).yaml" command="load" />
+    <rosparam if="$(eval arg('base_local_planner') == 'teb_local_planner/TebLocalPlannerROS')" 
+      file="$(find bot_navigation)/param/$(arg model)/teb_local_planner_params$(arg param_suffix).yaml" command="load" />
+    
+    <param name="DWAPlannerROS/min_vel_x" value="0.0" if="$(arg move_forward_only)" />
+    <param name="TebLocalPlannerROS/max_vel_x_backwards" value="0.0" if="$(arg move_forward_only)" />
+    
+  </node>
+</launch>

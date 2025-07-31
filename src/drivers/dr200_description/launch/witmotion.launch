@@ -1,0 +1,36 @@
+<launch>
+    <node name="imu" pkg="witmotion_ros" type="witmotion_ros_node" output="screen">
+        <param name="port" value="imu_device" />
+        <param name="baud_rate" value="115200" />
+        <param name="polling_interval" value="20" />
+        <param name="timeout_ms" value="150" />
+        <param name="restart_service_name" value="restart_imu" />
+
+        <param name="imu_publisher/topic_name" value="data" />
+        <param name="imu_publisher/frame_id" value="imu_base" />
+        <param name="imu_publisher/use_native_orientation" value="false" />
+        <param name="imu_publisher/measurements/acceleration/enabled" value="true" />
+        <rosparam param="imu_publisher/measurements/acceleration/covariance">
+            [0.002, 0, 0,
+            0, 0.002, 0,
+            0, 0, 0.002]
+        </rosparam>    <!-- 加速度测量参数 -->
+        <param name="imu_publisher/measurements/angular_velocity/enabled" value="true" />
+        <rosparam param="imu_publisher/measurements/angular_velocity/covariance">
+            [0.0002, 0, 0,
+            0, 0.0002, 0,
+            0, 0, 0.0002]
+        </rosparam>    <!-- 角速度测量参数 -->
+        <param name="imu_publisher/measurements/orientation/enabled" value="true" />
+        <rosparam param="imu_publisher/measurements/orientation/covariance">
+            [0.005, 0, 0,
+            0, 0.005, 0,
+            0, 0, 0.005]
+        </rosparam>    <!-- 方向测量参数 -->
+
+        <!-- RTC发布器参数 -->
+        <param name="rtc_publisher/enabled" value="true" />
+        <param name="rtc_publisher/topic_name" value="witmotion_clock" />
+        <param name="rtc_publisher/presync" value="true" />
+    </node>
+</launch>

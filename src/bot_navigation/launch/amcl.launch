@@ -1,0 +1,73 @@
+<launch>
+  <arg name="scan_topic" default="scan"/>  <!-- scan_topic无需加上命名空间,amcl会自动加上 -->
+  <arg name="odom_frame_id"   value="odom"/>
+  <arg name="base_frame_id"   value="base_link"/>
+
+  <arg name="use_map_topic" default="false"/>
+  <arg name="initial_pose_x" default="0.0"/>
+  <arg name="initial_pose_y" default="0.0"/>
+  <arg name="initial_pose_a" default="0.0"/>
+
+  <node pkg="amcl" type="amcl" name="amcl" output="screen">
+    <!-- 重映射地图服务到全局命名空间 -->
+    <remap from="scan" to="$(arg scan_topic)"/>
+    <remap from="static_map" to="/static_map"/>
+    <remap from="map" to="/map" />
+
+    <!-- 初始位姿设置 -->
+    <param name="initial_pose_x" value="$(arg initial_pose_x)"/>
+    <param name="initial_pose_y" value="$(arg initial_pose_y)"/>
+    <param name="initial_pose_a" value="$(arg initial_pose_a)"/>
+
+    <!-- 坐标系设置 -->
+    <param name="odom_frame_id" value="$(arg odom_frame_id)"/>
+    <param name="base_frame_id" value="$(arg base_frame_id)"/>
+    <param name="global_frame_id" value="map"/>
+
+    <!-- 里程计模型 -->
+    <param name="odom_model_type" value="diff"/>
+    <!-- 里程计噪声参数 -->
+    <param name="odom_alpha1" value="0.15"/>  <!-- 旋转时的旋转噪声 -->
+    <param name="odom_alpha2" value="0.15"/>  <!-- 平移时的旋转噪声 -->
+    <param name="odom_alpha3" value="0.15"/>  <!-- 平移时的平移噪声 -->
+    <param name="odom_alpha4" value="0.15"/>  <!-- 旋转时的平移噪声 -->
+    <param name="odom_alpha5" value="0.05"/>  <!-- 平移相关噪声 -->
+
+    <!-- 激光雷达参数 -->
+    <param name="laser_max_beams" value="60"/>
+    <param name="laser_max_range" value="20.0"/>
+    <param name="laser_min_range" value="0.12"/>
+
+    <!-- 激光雷达模型参数 -->
+    <param name="laser_model_type" value="likelihood_field"/>
+    <param name="laser_z_hit" value="0.85"/>     <!-- 命中权重 -->
+    <param name="laser_z_short" value="0.05"/>   <!-- 短距离测量权重 -->
+    <param name="laser_z_max" value="0.05"/>     <!-- 最大距离测量权重 -->
+    <param name="laser_z_rand" value="0.05"/>    <!-- 随机测量权重 -->
+    <param name="laser_sigma_hit" value="0.15"/>  <!-- 命中标准差 -->
+    <param name="laser_lambda_short" value="0.1"/>
+    <param name="laser_likelihood_max_dist" value="2.0"/>
+
+    <!-- 粒子滤波器参数 -->
+    <param name="min_particles" value="300"/>    <!-- 最小粒子数 -->
+    <param name="max_particles" value="2000"/>   <!-- 最大粒子数 -->
+    <param name="kld_err" value="0.03"/>         <!-- KLD误差 -->
+    <param name="kld_z" value="0.99"/>
+
+    <!-- 更新参数 -->
+    <param name="update_min_d" value="0.15"/>    <!-- 最小平移距离 -->
+    <param name="update_min_a" value="0.3"/>     <!-- 最小旋转角度 -->
+    <param name="resample_interval" value="2"/>   <!-- 重采样间隔 -->
+
+    <!-- 变换和恢复参数 -->
+    <param name="transform_tolerance" value="0.2"/>
+    <param name="recovery_alpha_slow" value="0.001"/>  <!-- 启用慢速恢复 -->
+    <param name="recovery_alpha_fast" value="0.1"/>    <!-- 启用快速恢复 -->
+
+    <!-- 发布参数 -->
+    <param name="gui_publish_rate" value="10.0"/>
+    <param name="save_pose_rate" value="0.5"/>
+    <param name="use_map_topic" value="$(arg use_map_topic)"/>
+    <param name="first_map_only" value="false"/>
+  </node>
+</launch>

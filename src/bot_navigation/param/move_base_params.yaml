@@ -1,0 +1,22 @@
+# Move Base 参数配置
+shutdown_costmaps: false
+
+# 控制器频率设置
+controller_frequency: 10.0         # 控制器更新频率
+planner_frequency: 5.0              # 全局规划器频率
+
+# 超时和耐心参数
+planner_patience: 10.0              # 全局规划器超时时间(增加以支持远距离A*路径规划)
+controller_patience: 15.0           # 局部规划器超时时间
+
+# 恢复行为参数
+conservative_reset_dist: 3.0        # 保守重置距离
+oscillation_timeout: 10.0           # 振荡超时时间
+oscillation_distance: 0.2           # 振荡距离阈值
+
+# 清除costmap参数
+clearing_rotation_allowed: true     # 允许清除旋转
+max_planning_retries: 3             # 最大规划重试次数
+
+# 全局规划器设置
+base_global_planner: "global_planner/GlobalPlanner"

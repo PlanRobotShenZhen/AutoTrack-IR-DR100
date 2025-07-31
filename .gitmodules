@@ -1,0 +1,9 @@
+[submodule "src/drivers/witmotion_ros/witmotion-uart-qt"]
+	path = src/drivers/witmotion_ros/witmotion-uart-qt
+	url = https://github.com/ElettraSciComp/witmotion_IMU_QT.git
+[submodule "src/drivers/OrbbecSDK_ROS1"]
+	path = src/drivers/OrbbecSDK_ROS1
+	url = https://github.com/orbbec/OrbbecSDK_ROS1.git
+[submodule "src/drivers/dr100_chassis_driver"]
+	path = src/drivers/dr100_chassis_driver
+	url = https://github.com/PlanRobotShenZhen/dr100_chassis_driver.git

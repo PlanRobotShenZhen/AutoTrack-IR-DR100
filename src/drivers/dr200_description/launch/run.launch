@@ -1,0 +1,30 @@
+<launch>
+    <arg name="chassis_port" default="/dev/dr200_chassis" />
+    <arg name="chassis_baudrate" default="115200" />
+    <arg name="odom_publish_tf" default="false" />
+    <arg name="use_camera" default="false" />
+
+    <!--- Sim Time -->
+    <param name="/use_sim_time" value="false" />
+
+    <!-- IMU -->
+    <include file="$(find dr200_description)/launch/witmotion.launch" />
+    <!-- lidar -->
+    <include file="$(find dr200_description)/launch/LDS-50C-C30E.launch" />
+
+    <!-- chassis -->
+    <include file="$(find dr200_description)/launch/chassis_controller.launch">
+        <arg name="port" value="$(arg chassis_port)" />
+        <arg name="baudrate" value="$(arg chassis_baudrate)" />
+        <arg name="odom_publish_tf" value="$(arg odom_publish_tf)" />
+    </include>
+
+    <!-- description -->
+    <include file="$(find dr200_description)/launch/description.launch" />
+    
+
+    <!-- camera -->
+    <group if="$(arg use_camera)">
+        <include file="$(find dr200_description)/launch/dabai_dcw.launch" />
+    </group>
+</launch>

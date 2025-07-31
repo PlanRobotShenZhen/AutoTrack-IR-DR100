@@ -1,0 +1,29 @@
+# 机器人足迹 - 基于DR200圆形底盘(直径45cm)
+footprint: [
+  [0.25, 0.25],
+  [-0.25, 0.25],
+  [-0.25, -0.25],
+  [0.25, -0.25]
+]
+
+# 障碍物层配置
+obstacles:
+  obstacle_range: 5.0
+  raytrace_range: 6.0
+  observation_sources: scan
+
+  scan:
+    sensor_frame: lidar_link
+    data_type: LaserScan
+    topic: scan
+    marking: true
+    clearing: true
+    min_obstacle_height: 0.0
+    max_obstacle_height: 2.0
+    obstacle_range: 5.0
+    raytrace_range: 6.0
+
+# 膨胀层配置
+inflation:
+  inflation_radius: 0.35
+  cost_scaling_factor: 5.0

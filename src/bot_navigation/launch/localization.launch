@@ -1,0 +1,16 @@
+<launch>
+    <arg name="use_ekf" default="true"/>
+    <arg name="publish_map_topic" default="true"/>
+
+    <!-- Map Server - 保持在全局命名空间，发布/map话题 -->
+    <arg name="map" default="$(find bot_navigation)/maps/map.yaml" />
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map)" output="screen" if="$(arg publish_map_topic)"/>
+
+    <!-- EKF - 在全局命名空间运行以避免frame_id问题 -->
+    <group if="$(arg use_ekf)">
+      <include file="$(find bot_navigation)/launch/ekf.launch" />
+    </group>
+
+    <!-- AMCL -->
+    <include file="$(find bot_navigation)/launch/amcl.launch" />
+</launch>

@@ -1,0 +1,11 @@
+<launch>
+    <!-- 地图保存目录 -->
+    <param name="maps_dir" value="$(find bot_navigation)/maps"/>
+
+    <!-- 是否修剪地图边界，默认为true -->
+    <arg name="trim_boundaries" default="true"/>
+
+    <node name="map_save" pkg="bot_navigation" type="save_map.py" output="screen">
+        <param name="trim_boundaries" value="$(arg trim_boundaries)"/>
+    </node>
+</launch>

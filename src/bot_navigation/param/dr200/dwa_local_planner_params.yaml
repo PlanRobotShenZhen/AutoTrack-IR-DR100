@@ -1,0 +1,56 @@
+# DR200 机器人DWA局部路径规划器参数
+
+DWAPlannerROS:
+
+# 机器人运动学参数
+  max_vel_x: 0.5
+  min_vel_x: -0.2
+
+  max_vel_y: 0.0           # 差分驱动，无侧向运动
+  min_vel_y: 0.0
+
+# 直线运动速度限制
+  max_vel_trans: 0.5
+  min_vel_trans: 0.05
+
+# 角速度限制
+  max_vel_theta: 1.5
+  min_vel_theta: 0.1
+
+# 加速度限制
+  acc_lim_x: 1.0
+  acc_lim_y: 0.0           # 差分驱动无侧向加速度
+  acc_lim_theta: 1.5 
+
+# 目标容差参数
+  xy_goal_tolerance: 0.15
+  yaw_goal_tolerance: 0.1 
+  latch_xy_goal_tolerance: false
+
+# 前向仿真参数
+  sim_time: 2.0
+  vx_samples: 15           # 线速度采样数
+  vy_samples: 1            # 差分驱动保持1个采样
+  vth_samples: 20          # 角速度采样数
+  controller_frequency: 10.0  # 控制频率
+
+# 轨迹评分参数
+  path_distance_bias: 24.0    # 路径距离权重
+  goal_distance_bias: 16.0    # 目标距离权重
+  occdist_scale: 0.05         # 障碍物距离权重
+  forward_point_distance: 0.4 # 前瞻距离
+  stop_time_buffer: 0.3       # 停止时间缓冲
+  scaling_speed: 0.3          # 缩放速度
+  max_scaling_factor: 0.3     # 最大缩放因子
+
+# 振荡预防参数
+  oscillation_reset_dist: 0.1  # 振荡重置距离
+
+# 额外安全参数
+  prune_plan: true             # 修剪计划路径
+  escape_reset_dist: 0.2       # 逃逸重置距离
+  escape_reset_theta: 0.3      # 逃逸重置角度
+
+# 调试参数
+  publish_traj_pc: false        # 发布轨迹点云
+  publish_cost_grid_pc: false   # 发布代价网格点云
