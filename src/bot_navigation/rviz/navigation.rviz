@@ -6,8 +6,6 @@ Panels:
       Expanded:
         - /TF1/Frames1
         - /TF1/Tree1
-        - /Global Map1
-        - /Local Map1
       Splitter Ratio: 0.5
     Tree Height: 709
   - Class: rviz/Selection
@@ -72,6 +70,11 @@ Visualization Manager:
           Show Trail: false
           Value: true
         base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        camera_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -171,7 +174,7 @@ Visualization Manager:
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
-      Size (m): 0.10
+      Size (m): 0.10000000149011612
       Style: Flat Squares
       Topic: /scan
       Unreliable: false
@@ -327,8 +330,8 @@ Visualization Manager:
           Head Diameter: 0.30000001192092896
           Head Length: 0.20000000298023224
           Length: 0.30000001192092896
-          Line Style: Lines
-          Line Width: 0.029999999329447746
+          Line Style: Billboards
+          Line Width: 0.05999999865889549
           Name: Teb Planner
           Offset:
             X: 0
@@ -347,12 +350,12 @@ Visualization Manager:
           Buffer Length: 1
           Class: rviz/Path
           Color: 255; 255; 0
-          Enabled: false
+          Enabled: true
           Head Diameter: 0.30000001192092896
           Head Length: 0.20000000298023224
           Length: 0.30000001192092896
-          Line Style: Lines
-          Line Width: 0.029999999329447746
+          Line Style: Billboards
+          Line Width: 0.05999999865889549
           Name: DWA Planner
           Offset:
             X: 0
@@ -366,7 +369,7 @@ Visualization Manager:
           Shaft Length: 0.10000000149011612
           Topic: /move_base/DWAPlannerROS/local_plan
           Unreliable: false
-          Value: false
+          Value: true
       Enabled: true
       Name: Local Map
     - Alpha: 1
@@ -459,4 +462,4 @@ Window Geometry:
     collapsed: true
   Width: 1279
   X: 138
-  Y: 31
+  Y: 27

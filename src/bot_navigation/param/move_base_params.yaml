@@ -16,7 +16,7 @@ oscillation_distance: 0.2           # 振荡距离阈值
 
 # 清除costmap参数
 clearing_rotation_allowed: true     # 允许清除旋转
-max_planning_retries: 3             # 最大规划重试次数
+max_planning_retries: 5             # 最大规划重试次数
 
 # 全局规划器设置
 base_global_planner: "global_planner/GlobalPlanner"

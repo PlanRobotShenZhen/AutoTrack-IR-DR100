@@ -28,13 +28,14 @@ TebLocalPlannerROS:
   min_turning_radius: 0.0           # 差分驱动可原地转向
 
   footprint_model:
-    type: "polygon"
-    vertices: [[0.25, 0.25], [-0.25, 0.25], [-0.25, -0.25], [0.25, -0.25]]
+    type: "circular"    # "point" "circular" "line" "two_circles" "polygon"
+    radius: 0.225
+    # vertices: [[0.25, 0.25], [-0.25, 0.25], [-0.25, -0.25], [0.25, -0.25]]
 
   # GoalTolerance
 
-  xy_goal_tolerance: 0.25             # 位置容差
-  yaw_goal_tolerance: 0.25           # 角度容差
+  xy_goal_tolerance: 0.10             # 位置容差
+  yaw_goal_tolerance: 0.10           # 角度容差
   free_goal_vel: False
   complete_global_plan: True
     

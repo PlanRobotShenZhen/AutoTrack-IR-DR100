@@ -22,19 +22,21 @@ TebLocalPlannerROS:
   max_vel_x: 0.1
   max_vel_x_backwards: 0.1 
   max_vel_y: 0.0                    # 差分驱动无侧向运动
-  max_vel_theta: 0.3
+  max_vel_theta: 1.5
   acc_lim_x: 0.05
-  acc_lim_theta: 0.05
+  acc_lim_theta: 0.5
   min_turning_radius: 0.0           # 差分驱动可原地转向
 
   footprint_model:
-    type: "polygon"
-    vertices: [[0.25, 0.25], [-0.25, 0.25], [-0.25, -0.25], [0.25, -0.25]]
+    type: "circular"    # "point" "circular" "line" "two_circles" "polygon"
+    radius: 0.225
+    # vertices: [[0.25, 0.25], [-0.25, 0.25], [-0.25, -0.25], [0.25, -0.25]]
+
 
   # GoalTolerance
 
-  xy_goal_tolerance: 0.15             # 位置容差
-  yaw_goal_tolerance: 0.15             # 角度容差
+  xy_goal_tolerance: 0.10             # 位置容差
+  yaw_goal_tolerance: 0.10             # 角度容差
   free_goal_vel: False
   complete_global_plan: True
     

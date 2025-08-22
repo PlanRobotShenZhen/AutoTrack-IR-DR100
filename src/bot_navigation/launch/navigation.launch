@@ -7,7 +7,7 @@
   <arg name="open_rviz" default="false"/>
   <arg name="slow_mode" default="true"/>
   <arg name="move_forward_only" default="false"/>
-  <arg name="base_local_planner" default="teb_local_planner/TebLocalPlannerROS" doc="base local planner [dwa_local_planner/DWAPlannerROS, teb_local_planner/TebLocalPlannerROS]"/>
+  <arg name="base_local_planner" default="dwa_local_planner/DWAPlannerROS" doc="base local planner [dwa_local_planner/DWAPlannerROS, teb_local_planner/TebLocalPlannerROS]"/>
 
   <!-- Localization -->
   <include file="$(find bot_navigation)/launch/localization.launch">

@@ -3,54 +3,47 @@
 DWAPlannerROS:
 
 # 机器人运动学参数
+  acc_lim_x: 0.5
+  acc_lim_y: 0
+  acc_lim_th: 1.5
+
+  max_vel_trans: 0.5    # 机器人最大平移速度的绝对值
+  min_vel_trans: 0.05   # 机器人最小平移速度的绝对值
+  trans_stopped_vel: 0.05 # 机器人平移速度低于该值时，认为机器人已停止移动
+  
   max_vel_x: 0.5
-  min_vel_x: -0.2
-
-  max_vel_y: 0.0           # 差分驱动，无侧向运动
+  min_vel_x: -0.12
+  max_vel_y: 0.0
   min_vel_y: 0.0
-
-# 直线运动速度限制
-  max_vel_trans: 0.5
-  min_vel_trans: 0.05
-
-# 角速度限制
-  max_vel_theta: 1.5
-  min_vel_theta: 0.1
-
-# 加速度限制
-  acc_lim_x: 1.0
-  acc_lim_y: 0.0           # 差分驱动无侧向加速度
-  acc_lim_theta: 1.5 
+  max_rot_vel: 3.2
+  min_rot_vel: 0.2
 
 # 目标容差参数
-  xy_goal_tolerance: 0.15
-  yaw_goal_tolerance: 0.1 
-  latch_xy_goal_tolerance: false
+  yaw_goal_tolerance: 0.10      # 偏航/旋转的容差
+  xy_goal_tolerance: 0.10
+  latch_xy_goal_tolerance: true # 如果目标公差被锁定，如果机器人到达目标 xy 位置，它将简单地在原地旋转，即使它最终超出了目标公差
 
 # 前向仿真参数
-  sim_time: 2.0
-  vx_samples: 15           # 线速度采样数
-  vy_samples: 1            # 差分驱动保持1个采样
-  vth_samples: 20          # 角速度采样数
+  sim_time: 2.0               # 前向模拟轨迹的时间量
+  sim_granularity: 0.025      # 给定轨迹上各点之间的步长
+  vx_samples: 3               # 线速度采样数
+  vy_samples: 1               # 差分驱动保持1个采样
+  vth_samples: 20             # 角速度采样数
   controller_frequency: 10.0  # 控制频率
 
 # 轨迹评分参数
-  path_distance_bias: 24.0    # 路径距离权重
-  goal_distance_bias: 16.0    # 目标距离权重
-  occdist_scale: 0.05         # 障碍物距离权重
-  forward_point_distance: 0.4 # 前瞻距离
-  stop_time_buffer: 0.3       # 停止时间缓冲
-  scaling_speed: 0.3          # 缩放速度
-  max_scaling_factor: 0.3     # 最大缩放因子
+  path_distance_bias: 64.0    # 路径距离权重
+  goal_distance_bias: 24.0    # 目标距离权重
+  occdist_scale: 0.15         # 障碍物距离权重
+  forward_point_distance: 0.325 # 前瞻距离
+  stop_time_buffer: 0.2       # 停止时间缓冲
+  scaling_speed: 0.25          # 缩放速度
+  max_scaling_factor: 0.2     # 最大缩放因子
+  publish_cost_grid_pc: false   # 发布代价网格点云
 
 # 振荡预防参数
-  oscillation_reset_dist: 0.1  # 振荡重置距离
+  oscillation_reset_dist: 0.05  # 振荡重置距离, 机器人必须移动多远才能重置振荡标志
 
-# 额外安全参数
+# 全局计划参数
   prune_plan: true             # 修剪计划路径
-  escape_reset_dist: 0.2       # 逃逸重置距离
-  escape_reset_theta: 0.3      # 逃逸重置角度
-
-# 调试参数
-  publish_traj_pc: false        # 发布轨迹点云
-  publish_cost_grid_pc: false   # 发布代价网格点云
+ 

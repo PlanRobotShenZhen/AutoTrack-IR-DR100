@@ -34,7 +34,7 @@
     <param name="odom_alpha5" value="0.05"/>  <!-- 平移相关噪声 -->
 
     <!-- 激光雷达参数 -->
-    <param name="laser_max_beams" value="60"/>
+    <param name="laser_max_beams" value="360"/>
     <param name="laser_max_range" value="20.0"/>
     <param name="laser_min_range" value="0.12"/>
 
