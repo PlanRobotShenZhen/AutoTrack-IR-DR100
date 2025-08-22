@@ -1,0 +1,61 @@
+### IP地址映射配置 ###
+IP:
+  self: '*'                    # '*' 代表本机所有IP
+  dispatch_center: 127.0.0.1   # 本机测试：调度中心IP设为本机
+  local_robot: 127.0.0.1       # 本机测试：本机IP设为本机
+  test_local: 127.0.0.1        # 本机测试地址
+
+send_topics:
+# 1. 发送地图信息
+- topic_name: /map
+  msg_type: nav_msgs/OccupancyGrid
+  max_freq: 1   # 地图更新频率较低
+  srcIP: self
+  srcPort: 3001
+
+# 2. 发送机器人位置信息 (AMCL定位结果)
+- topic_name: /amcl_pose
+  msg_type: geometry_msgs/PoseWithCovarianceStamped
+  max_freq: 10  # 非固定频率，由amcl参数控制
+  srcIP: self
+  srcPort: 3002
+
+# 3. 发送当前导航目标点
+- topic_name: /move_base/current_goal
+  msg_type: geometry_msgs/PoseStamped
+  max_freq: 10  # 非固定频率，由amcl参数控制
+  srcIP: self
+  srcPort: 3003
+
+# 4. 发送导航状态信息
+- topic_name: /move_base/status  
+  msg_type: actionlib_msgs/GoalStatusArray
+  max_freq: 5   # 状态更新频率
+  srcIP: self
+  srcPort: 3004
+
+# 5. 发送导航结果信息
+- topic_name: /move_base/result  
+  msg_type: move_base_msgs/MoveBaseActionResult
+  max_freq: 1   # 非固定频率，只有在导航结束时才会发送
+  srcIP: self
+  srcPort: 3005
+
+recv_topics:
+# 1. 接收导航目标点
+- topic_name: /move_base_simple/goal
+  msg_type: geometry_msgs/PoseStamped
+  srcIP: test_local
+  srcPort: 4001
+
+# 2. 接收速度控制指令
+- topic_name: /cmd_vel
+  msg_type: geometry_msgs/Twist
+  srcIP: test_local
+  srcPort: 4002
+
+# 3. 接收导航目标点的取消指令
+- topic_name: /move_base/cancel
+  msg_type: actionlib_msgs/GoalID
+  srcIP: test_local
+  srcPort: 4003

@@ -35,15 +35,35 @@
 #define MSG_TYPE3 "std_msgs/String"
 #define MSG_CLASS3 std_msgs::String
 
-// #include <xxx/yy.h>
-// #define MSG_TYPE4 "xxx/yy"
-// #define MSG_CLASS4 xxx::yy
+#include <geometry_msgs/PoseStamped.h>
+#define MSG_TYPE4 "geometry_msgs/PoseStamped"
+#define MSG_CLASS4 geometry_msgs::PoseStamped
+
+#include <geometry_msgs/PoseWithCovarianceStamped.h>
+#define MSG_TYPE5 "geometry_msgs/PoseWithCovarianceStamped"
+#define MSG_CLASS5 geometry_msgs::PoseWithCovarianceStamped
+
+#include <nav_msgs/OccupancyGrid.h>
+#define MSG_TYPE6 "nav_msgs/OccupancyGrid"
+#define MSG_CLASS6 nav_msgs::OccupancyGrid
+
+#include <actionlib_msgs/GoalStatusArray.h>
+#define MSG_TYPE7 "actionlib_msgs/GoalStatusArray"
+#define MSG_CLASS7 actionlib_msgs::GoalStatusArray
+
+#include <move_base_msgs/MoveBaseActionResult.h>
+#define MSG_TYPE8 "move_base_msgs/MoveBaseActionResult"
+#define MSG_CLASS8 move_base_msgs::MoveBaseActionResult
+
+#include <actionlib_msgs/GoalID.h>
+#define MSG_TYPE9 "actionlib_msgs/GoalID"
+#define MSG_CLASS9 actionlib_msgs::GoalID
 
 // ......
 
 // #include <xxx/yy.h>
-// #define MSG_TYPE10 "xxx/yy"
-// #define MSG_CLASS10 xxx::yy
+// #define MSG_TYPE11 "xxx/yy"
+// #define MSG_CLASS11 xxx::yy
 
 # define SUB_MAX 50 // max number of subscriber callbacks
 

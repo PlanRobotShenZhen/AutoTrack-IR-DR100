@@ -42,22 +42,26 @@
 /* send messages frequency control */
 bool send_freq_control(int i)
 {
-  bool discard_flag;
-  ros::Time t_now = ros::Time::now(); 
-  // check whether the send of this message will exceed the freq limit in the last period
-  if ((send_num[i] + 1) / (t_now - sub_t_last[i]).toSec() > sendTopics[i].max_freq) {
-    discard_flag = true;
-  }
-  else {
-    discard_flag = false;
-    send_num[i] ++;
-  }
-  // freq control period (1s)
-  if ((t_now - sub_t_last[i]).toSec() > 1.0){
+  ros::Time t_now = ros::Time::now();
+  double time_diff = (t_now - sub_t_last[i]).toSec();
+
+  if (time_diff <= 0.0 || time_diff > 10.0) {
     sub_t_last[i] = t_now;
-    send_num[i] = 0;
+    send_num[i] = sendTopics[i].max_freq;
+    return false;
   }
-  return discard_flag; // flag of discarding this message
+
+  double tokens_to_add = time_diff * sendTopics[i].max_freq;
+  send_num[i] = std::min(static_cast<double>(sendTopics[i].max_freq),
+                         send_num[i] + tokens_to_add);
+  sub_t_last[i] = t_now;
+
+  if (send_num[i] >= 1.0) {
+    send_num[i] -= 1.0;
+    return false;
+  }
+
+  return true; 
 }
 
 /* uniform callback functions for ROS subscribers */
@@ -73,22 +77,23 @@ void sub_cb(const T &msg)
   /* serialize the sending messages into send_buffer */
   namespace ser = ros::serialization;
   size_t data_len = ser::serializationLength(msg); // bytes length of msg
-  std::unique_ptr<uint8_t> send_buffer(new uint8_t[data_len]);  // create a dynamic length array
+
+  // 简化：基本的大小检查
+  if (data_len == 0 || data_len > 10 * 1024 * 1024) { // 10MB 限制
+    ROS_WARN("[bridge node] Invalid message size %zu bytes, skipping", data_len);
+    return;
+  }
+
+  // 简化：直接分配，让系统处理内存不足
+  std::unique_ptr<uint8_t[]> send_buffer(new uint8_t[data_len]);
   ser::OStream stream(send_buffer.get(), data_len);
   ser::serialize(stream, msg);
 
   /* zmq send message */
   zmqpp::message send_array;
-  send_array << data_len; 
-  /* equal to:
-    send_array.add_raw(reinterpret_cast<void const*>(&data_len), sizeof(size_t));
-  */
+  send_array << data_len;
   send_array.add_raw(reinterpret_cast<void const *>(send_buffer.get()), data_len);
-  // std::cout << "ready send!" << std::endl;
-  // send(&, true) for non-blocking, send(&, false) for blocking
-  bool dont_block = false; // Actually for PUB mode zmq socket, send() will never block
-  senders[i]->send(send_array, dont_block);
-  // std::cout << "send!" << std::endl;
+  senders[i]->send(send_array, false);
 
   // std::cout << msg << std::endl;
   // std::cout << i << std::endl;
@@ -100,11 +105,9 @@ template<typename T>
 void deserialize_pub(uint8_t* buffer_ptr, size_t msg_size, int i)
 {
   T msg;
-  // deserialize the receiving messages into ROS msg
   namespace ser = ros::serialization;
   ser::IStream stream(buffer_ptr, msg_size);
   ser::deserialize(stream, msg);
-  // publish ROS msg
   topic_pubs[i].publish(msg);
 }
 
@@ -114,32 +117,33 @@ void recv_func(int i)
 {
   while(recv_thread_flags[i])
   {
-    /* receive and process message */
-    zmqpp::message recv_array;
-    bool recv_flag; // receive success flag
-    // std::cout << "ready receive!" << std::endl;
-    // receive(&,true) for non-blocking, receive(&,false) for blocking
-    bool dont_block = false; // 'true' leads to high cpu load
-    if (recv_flag = receivers[i]->receive(recv_array, dont_block))
-    {
-      // std::cout << "receive!" << std::endl;
-      size_t data_len;
-      recv_array >> data_len; // unpack meta data
-      /*  equal to:
-        recv_array.get(&data_len, recv_array.read_cursor++); 
-        void get(T &value, size_t const cursor){
-          uint8_t const* byte = static_cast<uint8_t const*>(raw_data(cursor)); 
-          b = *byte;} 
-      */
-      // a dynamic length array by unique_ptr
-      std::unique_ptr<uint8_t> recv_buffer(new uint8_t[data_len]);  
-      // continue to copy the raw_data of recv_array into buffer
-      memcpy(recv_buffer.get(), static_cast<const uint8_t *>(recv_array.raw_data(recv_array.read_cursor())), data_len);
-      deserialize_publish(recv_buffer.get(), data_len, recvTopics[i].type, i);
+      /* receive and process message */
+      zmqpp::message recv_array;
+      bool recv_flag = false; // receive success flag
+      // std::cout << "ready receive!" << std::endl;
+      // receive(&,true) for non-blocking, receive(&,false) for blocking
+      bool dont_block = false; // 'true' leads to high cpu load
 
-      // std::cout << data_len << std::endl;
-      // std::cout << recv_buffer.get() << std::endl;
-    }
+      recv_flag = receivers[i]->receive(recv_array, dont_block);
+      if (recv_flag)
+      {
+        // std::cout << "receive!" << std::endl;
+        size_t data_len;
+        recv_array >> data_len; // unpack meta data
+
+        if (data_len == 0 || data_len > 20 * 1024 * 1024) { // Limit to 20MB
+          ROS_WARN("[bridge node] Invalid message size %zu bytes, skipping", data_len);
+          continue;
+        }
+
+        try {
+          std::unique_ptr<uint8_t[]> recv_buffer(new uint8_t[data_len]);
+          memcpy(recv_buffer.get(), static_cast<const uint8_t *>(recv_array.raw_data(recv_array.read_cursor())), data_len);
+          deserialize_publish(recv_buffer.get(), data_len, recvTopics[i].type, i);
+        } catch (const std::bad_alloc&) {
+          ROS_WARN("[bridge node] Memory allocation failed for %zu bytes, message dropped", data_len);
+        }
+      }
 
     /* if receive() does not block, sleep to decrease loop rate */
     if (dont_block)
@@ -148,13 +152,8 @@ void recv_func(int i)
     {
       /* check and report receive state */
       if (recv_flag != recv_flags_last[i]){
-        std::string topicName = recvTopics[i].name;
-        if (topicName.at(0) != '/') {
-          if (ns == "/") {topicName = "/" + topicName;}
-          else {topicName = ns + "/" + topicName;}
-        }  // print namespace prefix if topic name is not global
-        ROS_INFO("[bridge node] \"%s\" received!", topicName.c_str());
-      } // false -> true(first message in)        
+        ROS_INFO("[bridge node] \"%s\" received!", recvTopics[i].full_name.c_str());
+      } // false -> true(first message in)
       recv_flags_last[i] = recv_flag;
     }
   }
@@ -227,10 +226,6 @@ int main(int argc, char **argv)
     std::string host_name = iter->first;
     std::string host_ip = iter->second;
     std::cout << host_name << " : " << host_ip << std::endl;
-    if (ip_map.find(host_name) != ip_map.end())
-    { // ip_xml will never contain same names actually.
-      ROS_WARN("[bridge node] IPs with the same name in configuration %s!", host_name.c_str());
-    }
     ip_map[host_name] = host_ip;
   }
 
@@ -270,7 +265,16 @@ int main(int argc, char **argv)
     int max_freq = recv_topic_xml["max_freq"];
     std::string srcIP = ip_map[recv_topic_xml["srcIP"]];
     int srcPort = recv_topic_xml["srcPort"];
-    TopicInfo topic = {.name=topic_name, .type=msg_type, .max_freq=max_freq, .ip=srcIP, .port=srcPort};
+    std::string full_topic_name = topic_name;
+    if (topic_name.at(0) != '/') {
+      if (ns == "/") {
+        full_topic_name = "/" + topic_name;
+      } else {
+        full_topic_name = ns + "/" + topic_name;
+      }
+    }
+
+    TopicInfo topic = {.name=topic_name, .type=msg_type, .max_freq=max_freq, .ip=srcIP, .port=srcPort, .full_name=full_topic_name};
     recvTopics.emplace_back(topic);
     if (topic.name.at(0) != '/') {
       std::cout << ns;
@@ -340,6 +344,13 @@ int main(int argc, char **argv)
   for (int32_t i=0; i < len_recv; ++i){
     stop_recv(i);
   }
-  
+
+  // Wait for all receive threads to finish 
+  for (int32_t i=0; i < len_recv; ++i){
+    if (recv_threads[i].joinable()) {
+      recv_threads[i].join();
+    }
+  }
+
   return 0;
 }

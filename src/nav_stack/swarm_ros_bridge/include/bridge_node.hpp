@@ -41,6 +41,7 @@ struct TopicInfo
   int max_freq;
   std::string ip;
   int port;
+  std::string full_name; // 优化：预计算的完整话题名称，避免运行时字符串拼接
 };
 
 //********************* Parse configuration file **************************
@@ -67,7 +68,7 @@ std::vector<ros::Publisher> topic_pubs;
 
 // ******************* send frequency control ***************************
 std::vector<ros::Time> sub_t_last;
-std::vector<int> send_num;
+std::vector<double> send_num; // 改为 double 以支持令牌桶算法
 bool send_freq_control(int i);
 
 // ****************** launch receive threads *****************************

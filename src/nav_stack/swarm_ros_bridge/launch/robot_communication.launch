@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="use_local" default="false"/>
+
+  <!-- 本机测试：机器人通讯桥接节点 -->
+  <node pkg="swarm_ros_bridge" type="bridge_node" name="robot_communication" output="screen" >
+    <!-- 根据参数加载不同的配置文件 -->
+    <rosparam command="load"
+              file="$(find swarm_ros_bridge)/config/robot_communication_local.yaml"
+              if="$(arg use_local)" />
+    <rosparam command="load"
+              file="$(find swarm_ros_bridge)/config/robot_communication.yaml"
+              unless="$(arg use_local)" />
+  </node>
+</launch>
