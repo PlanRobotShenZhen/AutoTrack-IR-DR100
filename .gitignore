@@ -8,6 +8,7 @@ devel/
 devel_isolated/
 install/
 install_isolated/
+**/__pycache__/
 temp/
 
 *.pyc

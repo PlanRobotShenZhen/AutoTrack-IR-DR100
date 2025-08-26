@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Set Remote Resolution
+Comment=Set remote desktop resolution to 1280x720
+Exec=xrandr --fb 1280x720
+Icon=preferences-desktop-display
+Terminal=false
+StartupNotify=true

@@ -7,3 +7,4 @@
 [submodule "src/drivers/dr100_chassis_driver"]
 	path = src/drivers/dr100_chassis_driver
 	url = https://github.com/PlanRobotShenZhen/dr100_chassis_driver.git
+	branch = main

@@ -67,6 +67,26 @@ roslaunch dr200_description run.launch odom_publish_tf:=false   # 启动真实�
 roslaunch bot_navigation navigation.launch  use_ekf:=true  open_rviz:=true  slow_mode:=false  move_forward_only:=true  # 导航
 ```
 
+# 桌面快捷方式
+
+## xrandr
+
+```bash
+sudo chmod +x Resolution.desktop
+cp Resolution.desktop ~/Desktop/
+```
+and click `Resolution.desktop` on desktop.
+
+## Start
+
+```bash
+sudo chmod +x start.sh 
+sudo chmod +x start_autotrack.desktop
+cp start_autotrack.desktop ~/Desktop/
+```
+
+and click `start_autotrack.desktop` on desktop.
+
 ## 常用命令
 
   - 清除目标点: `rostopic pub /move_base/cancel actionlib_msgs/GoalID -- {}`

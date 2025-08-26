@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Start AutoTrack ROS
+Comment=Launch roscore and navigation in three GNOME terminals
+Exec=bash ~/catkin_ws/start.sh
+Icon=utilities-terminal
+Terminal=true
+StartupNotify=true
